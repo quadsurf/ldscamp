@@ -1,0 +1,16 @@
+{
+  "BASH_MAX_OUTPUT_LENGTH": 150000,
+  "autocompact_percentage_override": 81,
+  "permissions": {
+    "deny": [
+      "Read(node_modules/**)",
+      "Read(dist/**)",
+      "Read(.next/**)",
+      "Read(coverage/**)",
+      "Read(*.lock)"
+    ]
+  },
+  "customInstructions": "Strictly follow a 'Red-Green-Refactor' TDD cycle: a failing test must be shown before writing the implementation. Do not attempt to edit files using terminal editors like vim or nano; rely exclusively on the native Antigravity file manipulation tools or the basic text editor on Mac.",
+  "telemetry": false,
+  "theme": "dark"
+}

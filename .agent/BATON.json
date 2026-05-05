@@ -1,0 +1,17 @@
+{
+  "GLOBAL_ANCHOR": {
+    "active_adr_or_goal": "Initialize new project and await first human prompt.",
+    "definition_of_done": "Project scaffolding complete."
+  },
+  "ACTIVE_HORIZON": {
+    "current_mode": "brainstorming",
+    "active_focus": "Awaiting initial kickoff instructions.",
+    "recent_steps_or_turns": []
+  },
+  "SCRATCHPAD": {
+    "interaction_count": 0,
+    "dirty_files": [],
+    "immediate_blockers_or_questions": null
+  },
+  "MILESTONES": []
+}

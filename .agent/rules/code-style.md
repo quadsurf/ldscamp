@@ -1,0 +1,11 @@
+# Code Style Rules
+- Always use TypeScript. Never output raw JavaScript.
+- Use strict typing. Avoid `any`; use `unknown` if the type is truly dynamic.
+- Variable and function names must be `camelCase`.
+- Classes and Interfaces must be `PascalCase`.
+- Prefer `const` over `let`. Never use `var`.
+- Names of functions must be descriptive enough for humans to know what it does
+- Use commenting tags to explain functions and critical steps within a function
+- Code must be modular and readable
+- Use async/await syntax. Do not use `.then()` or `.catch()` chains.
+- For date manipulation, strictly use `date-fns`. Do not use `moment.js` or the native `Date` object directly.

@@ -1,0 +1,37 @@
+# Dependencies & Build
+node_modules/
+.next/
+dist/
+build/
+package-lock.json
+*.lock
+
+# Media & Fonts
+*.svg
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.ico
+*.woff
+*.woff2
+*.ttf
+
+# Test Artifacts
+playwright-report/
+test-results/
+blob-report/
+coverage/
+
+# Local Secrets & State
+.env.local
+.env.*.local
+.antigravity/workspace/
+
+# Agent Governance
+.agent/memory/
+.agent/skills/e2e-skills/
+.agent/skills/hidden-skills/antigravity-skills/
+.agent/skills/hidden-skills/brainstorming-planning/
+scaffold.sh
