@@ -20,4 +20,4 @@ This directory is a **Git Repository**. To carry this to another machine:
 - **Cursor/Copilot**: Reference these absolute paths in your global `.cursorrules`.
 
 ---
-*Created by Antigravity - 2026-03-12* - v7.11
+*Created by Antigravity - 2026-03-12* - v7.12
