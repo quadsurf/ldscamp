@@ -10,18 +10,25 @@
     "save": "",
     "saving": "",
     "select_option": "",
-    "submit": ""
+    "submit": "",
+    "yes": ""
   },
   "forms": {
     "builder": {
       "add_option": "",
       "canvas": "",
+      "conditional_help": "",
       "conditional_visibility": "",
       "empty": "",
       "enable_conditional": "",
+      "equals": "",
       "help_text": "",
+      "if_this_field": "",
+      "is": "",
+      "key_help": "",
       "label": "",
       "name": "",
+      "not_equals": "",
       "options": "",
       "placeholder": "",
       "preview": "",
@@ -33,6 +40,13 @@
       "submit_test": "",
       "toolbox": ""
     },
+    "errors": {
+      "atLeastOneOption": "",
+      "invalidEmail": "",
+      "mustBeNumber": "",
+      "required": "",
+      "signatureRequired": ""
+    },
     "manager": {
       "new_form": "",
       "search_placeholder": "",
@@ -41,6 +55,7 @@
     "types": {
       "checkbox_group": "",
       "date": "",
+      "email": "",
       "file": "",
       "number": "",
       "radio_group": "",

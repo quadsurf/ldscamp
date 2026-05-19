@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FormField } from '../../types/forms';
 import { compileFormSchema } from '../../utils/formSchemaCompiler';
 import { SignaturePad } from './SignaturePad';
-import { Upload, Check, AlertCircle } from 'lucide-react';
+import { Upload, Check, AlertCircle, Loader2 } from 'lucide-react';
 
 interface FormGeneratorProps {
   fields: FormField[];
@@ -40,6 +40,7 @@ export function FormGenerator({
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [uploadingFields, setUploadingFields] = useState<Record<string, boolean>>({});
 
   // Helper to check if a field is conditionally visible
   const isFieldVisible = (field: FormField) => {
@@ -102,7 +103,7 @@ export function FormGenerator({
     const visibleFields = fields.filter(isFieldVisible);
 
     // 2. Compile schema only for currently visible fields
-    const schema = compileFormSchema(visibleFields);
+    const schema = compileFormSchema(visibleFields, t);
 
     // 3. Validate values
     const result = schema.safeParse(values);
@@ -149,8 +150,11 @@ export function FormGenerator({
                           hasError ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : ''
                         }`}
                         rows={4}
+                        aria-invalid={hasError}
+                        aria-required={field.required}
+                        aria-describedby={hasError ? `${field.id}-error` : undefined}
                       />
-                      {errorMessage && <span className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
+                      {errorMessage && <span id={`${field.id}-error`} className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
                     </div>
                   );
 
@@ -167,6 +171,9 @@ export function FormGenerator({
                         className={`w-full bg-slate-900 border border-slate-700 hover:border-slate-600 focus:border-indigo-500 rounded-lg p-3 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all ${
                           hasError ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : ''
                         }`}
+                        aria-invalid={hasError}
+                        aria-required={field.required}
+                        aria-describedby={hasError ? `${field.id}-error` : undefined}
                       >
                         <option value="" className="text-slate-500">
                           {t('common.select_option', 'Select an option...')}
@@ -177,7 +184,7 @@ export function FormGenerator({
                           </option>
                         ))}
                       </select>
-                      {errorMessage && <span className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
+                      {errorMessage && <span id={`${field.id}-error`} className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
                     </div>
                   );
 
@@ -217,7 +224,7 @@ export function FormGenerator({
                           );
                         })}
                       </div>
-                      {errorMessage && <span className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
+                      {errorMessage && <span id={`${field.id}-error`} className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
                     </div>
                   );
 
@@ -263,21 +270,63 @@ export function FormGenerator({
                           );
                         })}
                       </div>
-                      {errorMessage && <span className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
+                      {errorMessage && <span id={`${field.id}-error`} className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
                     </div>
                   );
 
-                case 'file':
-                  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                  const isUploading = uploadingFields[field.name];
+
+                  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                     const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        handleChange(field.name, reader.result as string); // base64 representation
-                      };
-                      reader.readAsDataURL(file);
-                    } else {
+                    if (!file) {
                       handleChange(field.name, '');
+                      return;
+                    }
+
+                    // Set uploading state
+                    setUploadingFields(prev => ({ ...prev, [field.name]: true }));
+                    
+                    try {
+                      // 1. Get Auth Signature from our API
+                      const authRes = await fetch('/api/imagekit/auth');
+                      if (!authRes.ok) throw new Error('Failed to authenticate with ImageKit');
+                      const authData = await authRes.json();
+                      
+                      if (authData.error) {
+                        throw new Error(authData.error);
+                      }
+
+                      // 2. Upload to ImageKit
+                      const formData = new FormData();
+                      formData.append('file', file);
+                      formData.append('publicKey', authData.publicKey);
+                      formData.append('signature', authData.signature);
+                      formData.append('expire', authData.expire);
+                      formData.append('token', authData.token);
+                      formData.append('fileName', file.name);
+                      // Optional: append folder here if you want everything organized
+                      formData.append('folder', '/forms');
+
+                      const uploadRes = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                        method: 'POST',
+                        body: formData,
+                      });
+
+                      if (!uploadRes.ok) {
+                        const errorData = await uploadRes.json();
+                        throw new Error(errorData.message || 'Upload failed');
+                      }
+
+                      const uploadData = await uploadRes.json();
+                      
+                      // 3. Set the form value to the URL returned by ImageKit
+                      handleChange(field.name, uploadData.url);
+                    } catch (err: any) {
+                      console.error('File upload error:', err);
+                      setErrors(prev => ({ ...prev, [field.name]: err.message || 'Failed to upload file' }));
+                      handleChange(field.name, '');
+                    } finally {
+                      setUploadingFields(prev => ({ ...prev, [field.name]: false }));
                     }
                   };
 
@@ -294,15 +343,23 @@ export function FormGenerator({
                           type="file"
                           onChange={handleFileChange}
                           accept="image/*,application/pdf"
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          disabled={isUploading}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                         />
-                        {value ? (
+                        {isUploading ? (
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                            </div>
+                            <span className="text-sm font-medium text-indigo-400">{t('common.uploading', 'Uploading...')}</span>
+                          </div>
+                        ) : value ? (
                           <div className="flex flex-col items-center gap-2">
                             <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
                               <Check className="w-5 h-5" />
                             </div>
-                            <span className="text-sm font-medium text-emerald-400">{t('common.file_ready', 'File Loaded Successfully')}</span>
-                            {typeof value === 'string' && value.startsWith('data:image/') && (
+                            <span className="text-sm font-medium text-emerald-400">{t('common.file_ready', 'File Uploaded Successfully')}</span>
+                            {typeof value === 'string' && (value.includes('.jpg') || value.includes('.png') || value.includes('.jpeg') || value.includes('.gif') || value.includes('.webp') || value.startsWith('data:image/')) && (
                               <img src={value} alt="Preview" className="h-16 mt-2 rounded border border-slate-700 object-contain bg-slate-950" />
                             )}
                           </div>
@@ -316,7 +373,7 @@ export function FormGenerator({
                           </div>
                         )}
                       </div>
-                      {errorMessage && <span className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
+                      {errorMessage && <span id={`${field.id}-error`} className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
                     </div>
                   );
 
@@ -346,8 +403,11 @@ export function FormGenerator({
                         className={`w-full bg-slate-900 border border-slate-700 hover:border-slate-600 focus:border-indigo-500 rounded-lg p-3 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all ${
                           hasError ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : ''
                         }`}
+                        aria-invalid={hasError}
+                        aria-required={field.required}
+                        aria-describedby={hasError ? `${field.id}-error` : undefined}
                       />
-                      {errorMessage && <span className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
+                      {errorMessage && <span id={`${field.id}-error`} className="text-xs text-rose-500 font-medium">{errorMessage}</span>}
                     </div>
                   );
               }

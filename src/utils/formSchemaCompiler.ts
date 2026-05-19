@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { FormField } from '../types/forms';
 
-export function compileFormSchema(fields: FormField[]) {
+export function compileFormSchema(fields: FormField[], t: (key: string, fallback?: string) => string) {
   const shape: Record<string, z.ZodTypeAny> = {};
 
   fields.forEach(field => {
@@ -14,7 +14,7 @@ export function compileFormSchema(fields: FormField[]) {
           const parsed = Number(val);
           return isNaN(parsed) ? val : parsed;
         }, z.number({
-          invalid_type_error: 'Must be a number',
+          invalid_type_error: t('forms.errors.mustBeNumber', 'Must be a number'),
         }));
         break;
 
@@ -28,15 +28,22 @@ export function compileFormSchema(fields: FormField[]) {
 
       case 'signature':
         validator = z.string({
-          required_error: 'Signature is required and must be drawn',
-          invalid_type_error: 'Signature is required and must be drawn',
+          required_error: t('forms.errors.signatureRequired', 'Signature is required and must be drawn'),
+          invalid_type_error: t('forms.errors.signatureRequired', 'Signature is required and must be drawn'),
         });
+        break;
+
+      case 'email':
+        validator = z.string({
+          required_error: t('forms.errors.required', 'This field is required'),
+          invalid_type_error: t('forms.errors.required', 'This field is required'),
+        }).email({ message: t('forms.errors.invalidEmail', 'Invalid email address') });
         break;
 
       default:
         validator = z.string({
-          required_error: 'This field is required',
-          invalid_type_error: 'This field is required',
+          required_error: t('forms.errors.required', 'This field is required'),
+          invalid_type_error: t('forms.errors.required', 'This field is required'),
         });
         break;
     }
@@ -44,20 +51,20 @@ export function compileFormSchema(fields: FormField[]) {
     if (field.required) {
       if (field.type === 'checkbox_group') {
         validator = (validator as z.ZodArray<z.ZodString>).min(1, { 
-          message: 'At least one option must be selected' 
+          message: t('forms.errors.atLeastOneOption', 'At least one option must be selected') 
         });
       } else if (field.type === 'number') {
         validator = z.union([
-          z.number({ invalid_type_error: 'Must be a number' }),
-          z.any().refine(() => false, { message: 'This field is required' })
+          z.number({ invalid_type_error: t('forms.errors.mustBeNumber', 'Must be a number') }),
+          z.any().refine(() => false, { message: t('forms.errors.required', 'This field is required') })
         ]);
       } else if (field.type === 'signature') {
         validator = (validator as z.ZodString).min(10, { 
-          message: 'Signature is required and must be drawn' 
+          message: t('forms.errors.signatureRequired', 'Signature is required and must be drawn') 
         });
       } else {
         validator = (validator as z.ZodString).min(1, { 
-          message: 'This field is required' 
+          message: t('forms.errors.required', 'This field is required') 
         });
       }
     } else {

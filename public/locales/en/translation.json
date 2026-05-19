@@ -10,18 +10,25 @@
     "save": "Save Changes",
     "saving": "Saving...",
     "select_option": "Select an option...",
-    "submit": "Submit Form"
+    "submit": "Submit Form",
+    "yes": "Yes"
   },
   "forms": {
     "builder": {
       "add_option": "Add Option",
       "canvas": "Form Layout Canvas",
+      "conditional_help": "Requires at least one radio or dropdown selector field preceding this field to set conditional visibility rules.",
       "conditional_visibility": "Conditional Visibility",
       "empty": "No fields added yet. Select a field type above to begin.",
       "enable_conditional": "Show field conditionally",
+      "equals": "Equals",
       "help_text": "Help Text",
+      "if_this_field": "If this field...",
+      "is": "Is...",
+      "key_help": "Alpha-numeric characters and underscores only.",
       "label": "Field Label",
       "name": "JSON Key Name",
+      "not_equals": "Does Not Equal",
       "options": "Options",
       "placeholder": "Placeholder Text",
       "preview": "Live Preview",
@@ -33,6 +40,13 @@
       "submit_test": "Test Submit",
       "toolbox": "Add Form Fields"
     },
+    "errors": {
+      "atLeastOneOption": "At least one option must be selected",
+      "invalidEmail": "Invalid email address",
+      "mustBeNumber": "Must be a number",
+      "required": "This field is required",
+      "signatureRequired": "Signature is required and must be drawn"
+    },
     "manager": {
       "new_form": "Create New Form",
       "search_placeholder": "Search templates by title or slug...",
@@ -41,6 +55,7 @@
     "types": {
       "checkbox_group": "Checkbox Group",
       "date": "Date Selector",
+      "email": "Email Address",
       "file": "File Upload",
       "number": "Number",
       "radio_group": "Radio Group",
