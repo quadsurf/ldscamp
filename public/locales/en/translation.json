@@ -1,0 +1,53 @@
+{
+  "common": {
+    "clear": "Clear",
+    "create": "Create Form",
+    "creating": "Creating...",
+    "drag_upload": "Click or drag file here to upload",
+    "file_limit": "PDF, PNG, JPG up to 5MB",
+    "file_ready": "File Loaded Successfully",
+    "loading": "Processing...",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "select_option": "Select an option...",
+    "submit": "Submit Form"
+  },
+  "forms": {
+    "builder": {
+      "add_option": "Add Option",
+      "canvas": "Form Layout Canvas",
+      "conditional_visibility": "Conditional Visibility",
+      "empty": "No fields added yet. Select a field type above to begin.",
+      "enable_conditional": "Show field conditionally",
+      "help_text": "Help Text",
+      "label": "Field Label",
+      "name": "JSON Key Name",
+      "options": "Options",
+      "placeholder": "Placeholder Text",
+      "preview": "Live Preview",
+      "preview_mode": "Live Form Preview Mode",
+      "properties": "Field Properties",
+      "required": "Required Field",
+      "save_success": "Form template updated successfully and published live.",
+      "select_field": "Select a field from the canvas to edit its properties.",
+      "submit_test": "Test Submit",
+      "toolbox": "Add Form Fields"
+    },
+    "manager": {
+      "new_form": "Create New Form",
+      "search_placeholder": "Search templates by title or slug...",
+      "title": "Forms Manager"
+    },
+    "types": {
+      "checkbox_group": "Checkbox Group",
+      "date": "Date Selector",
+      "file": "File Upload",
+      "number": "Number",
+      "radio_group": "Radio Group",
+      "select": "Select Dropdown",
+      "signature": "Digital Signature",
+      "text": "Text",
+      "textarea": "Text Area"
+    }
+  }
+}

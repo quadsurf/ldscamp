@@ -1,0 +1,53 @@
+{
+  "common": {
+    "clear": "",
+    "create": "",
+    "creating": "",
+    "drag_upload": "",
+    "file_limit": "",
+    "file_ready": "",
+    "loading": "",
+    "save": "",
+    "saving": "",
+    "select_option": "",
+    "submit": ""
+  },
+  "forms": {
+    "builder": {
+      "add_option": "",
+      "canvas": "",
+      "conditional_visibility": "",
+      "empty": "",
+      "enable_conditional": "",
+      "help_text": "",
+      "label": "",
+      "name": "",
+      "options": "",
+      "placeholder": "",
+      "preview": "",
+      "preview_mode": "",
+      "properties": "",
+      "required": "",
+      "save_success": "",
+      "select_field": "",
+      "submit_test": "",
+      "toolbox": ""
+    },
+    "manager": {
+      "new_form": "",
+      "search_placeholder": "",
+      "title": ""
+    },
+    "types": {
+      "checkbox_group": "",
+      "date": "",
+      "file": "",
+      "number": "",
+      "radio_group": "",
+      "select": "",
+      "signature": "",
+      "text": "",
+      "textarea": ""
+    }
+  }
+}

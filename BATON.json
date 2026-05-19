@@ -1,0 +1,37 @@
+{
+  "GLOBAL_ANCHOR": {
+    "active_adr_or_goal": "docs/PLAN-summer-camp-app.md",
+    "definition_of_done": "Multi-tenant Summer Camp SaaS with Super Admin dynamic forms, camp director groups, wards, and no-redirect social auth."
+  },
+  "ACTIVE_HORIZON": {
+    "current_mode": "coding",
+    "active_focus": "Ready for Task 3 (Admin Form Generator UI) after completing validation and testing.",
+    "recent_steps_or_turns": [
+      {
+        "action": "Backfilled Vitest tests for auth and Supabase clients, integrated i18n, created USER_GUIDE.",
+        "status": "success"
+      },
+      {
+        "action": "Wired up Google Cloud Translation API via local script automation with offline resilience, resolving API credentials mapping.",
+        "status": "success"
+      }
+    ]
+  },
+  "SCRATCHPAD": {
+    "interaction_count": 2,
+    "dirty_files": [],
+    "immediate_blockers_or_questions": null
+  },
+  "MILESTONES": [
+    {
+      "resolution_summary": "Tasks 1 & 2 fully completed and tested. i18n established.",
+      "artifacts_produced": [
+        "supabase/migrations/20260508102130_initial_schema.sql",
+        "src/components/auth/SocialLogin.tsx",
+        "src/lib/supabase/client.ts",
+        "src/lib/supabase/server.ts",
+        "docs/USER_GUIDE.md"
+      ]
+    }
+  ]
+}

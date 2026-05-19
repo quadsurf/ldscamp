@@ -101,3 +101,8 @@ db.sqlite3
 # =========================
 .antigravity/workspace/
 .cursor/
+
+# =========================
+# Cloud Credentials
+# =========================
+google-cloud-key.json
