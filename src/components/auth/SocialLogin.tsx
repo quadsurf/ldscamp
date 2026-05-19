@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Script from 'next/script'
 import { useTranslation } from 'react-i18next'
 
-export default function SocialLogin() {
+export default function SocialLogin({ redirectTo = '/admin/dash' }: { redirectTo?: string }) {
   const { t } = useTranslation('common')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -29,7 +29,7 @@ export default function SocialLogin() {
         if (error) throw error
         
         // Push to dashboard upon success
-        router.push('/admin/dash')
+        router.push(redirectTo)
       } catch (err: any) {
         setError(err.message)
       } finally {
@@ -63,7 +63,7 @@ export default function SocialLogin() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
       },
     })
     if (error) {

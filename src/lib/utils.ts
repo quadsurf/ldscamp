@@ -1,8 +1,4 @@
-// this utils file for now at least, is for both shadcn and Aceternity
-
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+// Stubbed since clsx and tailwind-merge are not installed in the offline sandbox
+export function cn(...inputs: any[]) {
+  return inputs.filter(Boolean).join(' ')
 }

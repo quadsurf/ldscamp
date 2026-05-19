@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { FormField } from '../types/forms';
 
-export function compileFormSchema(fields: FormField[], t: (key: string, fallback?: string) => string) {
+export function compileFormSchema(fields: FormField[], t: any) {
   const shape: Record<string, z.ZodTypeAny> = {};
 
   fields.forEach(field => {
@@ -14,7 +14,7 @@ export function compileFormSchema(fields: FormField[], t: (key: string, fallback
           const parsed = Number(val);
           return isNaN(parsed) ? val : parsed;
         }, z.number({
-          invalid_type_error: t('forms.errors.mustBeNumber', 'Must be a number'),
+          message: t('forms.errors.mustBeNumber', 'Must be a number'),
         }));
         break;
 
@@ -28,22 +28,19 @@ export function compileFormSchema(fields: FormField[], t: (key: string, fallback
 
       case 'signature':
         validator = z.string({
-          required_error: t('forms.errors.signatureRequired', 'Signature is required and must be drawn'),
-          invalid_type_error: t('forms.errors.signatureRequired', 'Signature is required and must be drawn'),
+          message: t('forms.errors.signatureRequired', 'Signature is required and must be drawn'),
         });
         break;
 
       case 'email':
         validator = z.string({
-          required_error: t('forms.errors.required', 'This field is required'),
-          invalid_type_error: t('forms.errors.required', 'This field is required'),
+          message: t('forms.errors.required', 'This field is required'),
         }).email({ message: t('forms.errors.invalidEmail', 'Invalid email address') });
         break;
 
       default:
         validator = z.string({
-          required_error: t('forms.errors.required', 'This field is required'),
-          invalid_type_error: t('forms.errors.required', 'This field is required'),
+          message: t('forms.errors.required', 'This field is required'),
         });
         break;
     }
@@ -55,7 +52,7 @@ export function compileFormSchema(fields: FormField[], t: (key: string, fallback
         });
       } else if (field.type === 'number') {
         validator = z.union([
-          z.number({ invalid_type_error: t('forms.errors.mustBeNumber', 'Must be a number') }),
+          z.number({ message: t('forms.errors.mustBeNumber', 'Must be a number') }),
           z.any().refine(() => false, { message: t('forms.errors.required', 'This field is required') })
         ]);
       } else if (field.type === 'signature') {
