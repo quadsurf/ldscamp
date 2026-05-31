@@ -9,7 +9,7 @@ type ProfileWithWard = {
   first_name: string | null
   last_name: string | null
   phone: string | null
-  role: string
+  roles: string[]
   created_at: string
   wards: {
     name: string
@@ -20,7 +20,7 @@ type ProfileWithWard = {
 export default function PeopleViewerPage({
   params,
 }: {
-  params: { groupSlug: string }
+  params: { stakeSlug: string }
 }) {
   const supabase = createClient()
   
@@ -33,35 +33,45 @@ export default function PeopleViewerPage({
   useEffect(() => {
     async function loadData() {
       // Get group ID
-      const { data: group } = await supabase
-        .from('groups')
+      const { data: stake } = await supabase
+        .from('stakes')
         .select('id')
-        .eq('slug', params.groupSlug)
+        .eq('slug', params.stakeSlug)
         .single()
         
-      if (group) {
+      if (stake) {
         // Fetch profiles with joined ward data
         const { data: profilesData } = await supabase
           .from('profiles')
           .select(`
             *,
-            wards (
+            entities (
               name,
               entity_type
+            ),
+            profile_roles (
+              roles (
+                name
+              )
             )
           `)
-          .eq('group_id', group.id)
+          .eq('stake_id', stake.id)
           .order('created_at', { ascending: false })
           
         if (profilesData) {
-          setPeople(profilesData as unknown as ProfileWithWard[])
+          const mapped = profilesData.map((p: any) => ({
+            ...p,
+            wards: p.entities,
+            roles: p.profile_roles?.map((pr: any) => pr.roles.name) || []
+          }))
+          setPeople(mapped as ProfileWithWard[])
         }
       }
       setIsLoading(false)
     }
     
     loadData()
-  }, [params.groupSlug, supabase])
+  }, [params.stakeSlug, supabase])
 
   // Filter logic
   const filteredPeople = people.filter(person => {
@@ -69,7 +79,7 @@ export default function PeopleViewerPage({
       `${person.first_name || ''} ${person.last_name || ''}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (person.phone && person.phone.includes(searchQuery))
       
-    const matchesRole = roleFilter === 'all' || person.role === roleFilter
+    const matchesRole = roleFilter === 'all' || person.roles.includes(roleFilter)
     
     return matchesSearch && matchesRole
   })
@@ -79,9 +89,9 @@ export default function PeopleViewerPage({
     return role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
   }
 
-  const getRoleBadgeColor = (role: string) => {
-    if (role.includes('admin') || role.includes('director')) return 'bg-indigo-100 text-indigo-800 border-indigo-200'
-    if (role === 'youth') return 'bg-emerald-100 text-emerald-800 border-emerald-200'
+  const getRoleBadgeColor = (roles: string[]) => {
+    if (roles.some(r => r.includes('admin') || r.includes('director'))) return 'bg-indigo-100 text-indigo-800 border-indigo-200'
+    if (roles.includes('youth')) return 'bg-emerald-100 text-emerald-800 border-emerald-200'
     return 'bg-slate-100 text-slate-800 border-slate-200'
   }
 
@@ -191,12 +201,16 @@ export default function PeopleViewerPage({
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getRoleBadgeColor(person.role)}`}>
-                        {person.role.includes('director') || person.role.includes('admin') ? (
-                          <Shield className="w-3 h-3 mr-1" />
-                        ) : null}
-                        {formatRole(person.role)}
-                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {person.roles.map(r => (
+                          <span key={r} className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getRoleBadgeColor([r])}`}>
+                            {r.includes('director') || r.includes('admin') ? (
+                              <Shield className="w-3 h-3 mr-1" />
+                            ) : null}
+                            {formatRole(r)}
+                          </span>
+                        ))}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-slate-900 flex items-center">

@@ -22,11 +22,23 @@ export default async function AdminDashLayout({
   // Fetch user profile and verify role is super_admin
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role, first_name, last_name')
+    .select(`
+      first_name, 
+      last_name,
+      profile_roles (
+        roles (
+          name
+        )
+      )
+    `)
     .eq('id', user.id)
     .single();
 
-  if (!profile || profile.role !== 'super_admin') {
+  const isSuperAdmin = profile?.profile_roles?.some(
+    (pr: any) => pr.roles.name === 'super_admin'
+  );
+
+  if (!profile || !isSuperAdmin) {
     redirect('/admin');
   }
 

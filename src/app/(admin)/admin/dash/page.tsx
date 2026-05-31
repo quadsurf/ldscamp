@@ -13,7 +13,7 @@ export default async function AdminOverviewPage() {
     { count: submissionsCount }
   ] = await Promise.all([
     supabase.from('forms').select('*', { count: 'exact', head: true }),
-    supabase.from('groups').select('*', { count: 'exact', head: true }),
+    supabase.from('stakes').select('*', { count: 'exact', head: true }),
     supabase.from('form_submissions').select('*', { count: 'exact', head: true })
   ]);
 

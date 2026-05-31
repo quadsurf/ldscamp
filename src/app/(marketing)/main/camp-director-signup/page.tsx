@@ -20,7 +20,7 @@ export default function CampDirectorSignupPage() {
     },
     {
       title: 'Secure & Compliant',
-      description: 'Role-based access control and strict data isolation for your entire stake or ward.',
+      description: 'Role-based access control and strict data isolation for your entire stake or entity.',
       icon: <ShieldCheck className="w-5 h-5 text-indigo-600" />
     },
     {

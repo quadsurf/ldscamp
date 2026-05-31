@@ -13,12 +13,12 @@ const wardSchema = z.object({
 export default function WardsManagerPage({
   params,
 }: {
-  params: { groupSlug: string }
+  params: { stakeSlug: string }
 }) {
   const supabase = createClient()
   
-  const [groupId, setGroupId] = useState<string | null>(null)
-  const [wards, setWards] = useState<any[]>([])
+  const [stakeId, setGroupId] = useState<string | null>(null)
+  const [wards, setEntities] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   
   const [formData, setFormData] = useState({ name: '', entity_type: 'Ward' })
@@ -29,29 +29,29 @@ export default function WardsManagerPage({
   useEffect(() => {
     async function loadData() {
       // Get group ID
-      const { data: group } = await supabase
-        .from('groups')
+      const { data: stake } = await supabase
+        .from('stakes')
         .select('id')
-        .eq('slug', params.groupSlug)
+        .eq('slug', params.stakeSlug)
         .single()
         
-      if (group) {
-        setGroupId(group.id)
+      if (stake) {
+        setGroupId(stake.id)
         
         // Get wards
-        const { data: wardsData } = await supabase
-          .from('wards')
+        const { data: entitiesData } = await supabase
+          .from('entities')
           .select('*')
-          .eq('group_id', group.id)
+          .eq('stake_id', stake.id)
           .order('name')
           
-        if (wardsData) setWards(wardsData)
+        if (entitiesData) setEntities(entitiesData)
       }
       setIsLoading(false)
     }
     
     loadData()
-  }, [params.groupSlug, supabase])
+  }, [params.stakeSlug, supabase])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -75,7 +75,7 @@ export default function WardsManagerPage({
       return
     }
 
-    if (!groupId) {
+    if (!stakeId) {
       setSubmitError('Group ID not found. Please refresh.')
       return
     }
@@ -83,9 +83,9 @@ export default function WardsManagerPage({
     setIsSubmitting(true)
 
     const { data: newWard, error } = await supabase
-      .from('wards')
+      .from('entities')
       .insert({
-        group_id: groupId,
+        stake_id: stakeId,
         name: formData.name,
         entity_type: formData.entity_type
       })
@@ -99,7 +99,7 @@ export default function WardsManagerPage({
     }
 
     // Success! Update list and clear form
-    setWards(prev => [...prev, newWard].sort((a, b) => a.name.localeCompare(b.name)))
+    setEntities(prev => [...prev, newWard].sort((a, b) => a.name.localeCompare(b.name)))
     setFormData({ name: '', entity_type: 'Ward' })
     setIsSubmitting(false)
   }
@@ -107,9 +107,9 @@ export default function WardsManagerPage({
   const handleDeleteWard = async (wardId: string) => {
     if (!confirm('Are you sure you want to delete this ward? Anyone assigned to it will lose their ward assignment.')) return
     
-    const { error } = await supabase.from('wards').delete().eq('id', wardId)
+    const { error } = await supabase.from('entities').delete().eq('id', wardId)
     if (!error) {
-      setWards(prev => prev.filter(w => w.id !== wardId))
+      setEntities(prev => prev.filter(w => w.id !== wardId))
     }
   }
 
@@ -118,7 +118,7 @@ export default function WardsManagerPage({
       <div>
         <h2 className="text-2xl font-bold text-slate-900">Wards & Branches</h2>
         <p className="mt-1 text-sm text-slate-500">
-          Manage the local units that make up your camp group. Parents will select their ward from this list when registering.
+          Manage the local units that make up your camp stake. Parents will select their ward from this list when registering.
         </p>
       </div>
 

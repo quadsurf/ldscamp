@@ -40,7 +40,7 @@ export interface FormDefinition {
 
 export interface FormSubmission {
   id: string;
-  group_id: string;
+  stake_id: string;
   user_id: string;
   form_type: string;
   data: Record<string, any>;
